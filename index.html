@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>X Post Generator | Create Beautiful Twitter Posts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+      .twitter-post {
+        width: 500px;
+        min-height: 300px;
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .twitter-post:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .twitter-header {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .twitter-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .twitter-username {
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+
+      .twitter-handle {
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .twitter-content {
+        padding: 0 16px 16px 16px;
+        font-size: 16px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .twitter-footer {
+        padding: 0 16px 16px 16px;
+        display: flex;
+        gap: 12px;
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .twitter-icon {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .color-picker {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .color-picker::-webkit-color-swatch {
+        border: none;
+        border-radius: 8px;
+      }
+
+      .color-picker::-moz-color-swatch {
+        border: none;
+        border-radius: 8px;
+      }
+
+      .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          var(--gradient-start),
+          var(--gradient-end)
+        );
+      }
+
+      .twitter-verified {
+        color: #1d9bf0;
+        margin-left: 2px;
+      }
+
+      .twitter-post-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 16px;
+      }
+
+      .twitter-post-image-placeholder {
+        width: 100%;
+        height: 200px;
+        background-color: #f3f4f6;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        margin-bottom: 16px;
+      }
+
+      .twitter-post-image-placeholder i {
+        font-size: 48px;
+      }
+
+      .twitter-post-image-container {
+        position: relative;
+      }
+
+      .twitter-post-image-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .twitter-post-image-remove:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      .twitter-post-image-remove i {
+        font-size: 14px;
+      }
+
+      .twitter-post-image-upload {
+        display: none;
+      }
+
+      .twitter-post-image-upload-label {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #1d9bf0;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .twitter-post-image-upload-label:hover {
+        background-color: #0c7abf;
+      }
+
+      .twitter-post-image-upload-label i {
+        margin-right: 8px;
+      }
+
+      .twitter-post-image-upload-info {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 8px;
+      }
+
+      .twitter-post-image-upload-container {
+        margin-bottom: 16px;
+      }
+
+      .twitter-post-image-upload-preview {
+        width: 100%;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-top: 8px;
+        display: none;
+      }
+
+      .twitter-post-image-upload-preview.show {
+        display: block;
+      }
+
+      .twitter-post-image-upload-preview-container {
+        position: relative;
+      }
+
+      .twitter-post-image-upload-preview-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .twitter-post-image-upload-preview-remove:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      .twitter-post-image-upload-preview-remove i {
+        font-size: 14px;
+      }
+
+      .twitter-post-image-upload-preview-info {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 8px;
+      }
+
+      .twitter-post-image-upload-preview-info i {
+        margin-right: 8px;
+      }
+
+      .twitter-post-image-upload-preview-info span {
+        font-weight: 700;
+      }
+
+      .twitter-post-image-upload-preview-info.error {
+        color: #ef4444;
+      }
+
+      .twitter-post-image-upload-preview-info.success {
+        color: #10b981;
+      }
+
+      .twitter-post-image-upload-preview-info.warning {
+        color: #f59e0b;
+      }
+
+      .twitter-post-image-upload-preview-info.info {
+        color: #3b82f6;
+      }
+
+      .twitter-post-image-upload-preview-info i {
+        margin-right: 8px;
+      }
+
+      .twitter-post-image-upload-preview-info span {
+        font-weight: 700;
+      }
+
+      .twitter-post-image-upload-preview-info.error {
+        color: #ef4444;
+      }
+
+      .twitter-post-image-upload-preview-info.success {
+        color: #10b981;
+      }
+
+      .twitter-post-image-upload-preview-info.warning {
+        color: #f59e0b;
+      }
+
+      .twitter-post-image-upload-preview-info.info {
+        color: #3b82f6;
+      }
+
+      .twitter-post-image-upload-preview-info i {
+        margin-right: 8px;
+      }
+
+      .twitter-post-image-upload-preview-info span {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">X Post Generator</h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Create beautiful, customizable Twitter/X posts with your own content
+          and style. Download and share your creations!
+        </p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Preview Section -->
+        <div class="lg:w-1/2">
+          <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">
+              Post Preview
+            </h2>
+            <div class="flex justify-center">
+              <div id="post-preview" class="twitter-post bg-white">
+                <div class="twitter-header">
+                  <img
+                    id="preview-avatar"
+                    src="https://randomuser.me/api/portraits/men/1.jpg"
+                    alt="Profile"
+                    class="twitter-avatar"
+                  />
+                  <div>
+                    <div class="flex items-center">
+                      <span id="preview-username" class="twitter-username"
+                        >John Doe</span
+                      >
+                      <i
+                        class="fas fa-check-circle twitter-verified"
+                        id="preview-verified"
+                      ></i>
+                    </div>
+                    <span id="preview-handle" class="twitter-handle"
+                      >@johndoe</span
+                    >
+                  </div>
+                </div>
+                <div id="preview-content" class="twitter-content">
+                  This is a sample tweet. Edit the content on the right to
+                  customize your post!
+                </div>
+                <div
+                  id="preview-image-container"
+                  class="twitter-post-image-container"
+                >
+                  <div class="twitter-post-image-placeholder">
+                    <i class="fas fa-image"></i>
+                  </div>
+                </div>
+                <div class="twitter-footer">
+                  <div class="twitter-icon">
+                    <i class="far fa-comment"></i>
+                    <span>24</span>
+                  </div>
+                  <div class="twitter-icon">
+                    <i class="fas fa-retweet"></i>
+                    <span>56</span>
+                  </div>
+                  <div class="twitter-icon">
+                    <i class="far fa-heart"></i>
+                    <span>128</span>
+                  </div>
+                  <div class="twitter-icon">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>1.2K</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex justify-center">
+              <button
+                id="download-btn"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-full transition duration-300 flex items-center"
+              >
+                <i class="fas fa-download mr-2"></i> Download Post
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customization Section -->
+        <div class="lg:w-1/2">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">
+              Customize Your Post
+            </h2>
+
+            <!-- Profile Section -->
+            <div class="mb-8">
+              <h3
+                class="text-lg font-medium text-gray-700 mb-4 flex items-center"
+              >
+                <i class="fas fa-user-circle mr-2 text-blue-500"></i> Profile
+                Information
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <label
+                    for="username"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Username</label
+                  >
+                  <input
+                    type="text"
+                    id="username"
+                    value="John Doe"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="handle"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Handle</label
+                  >
+                  <div class="flex">
+                    <span
+                      class="inline-flex items-center px-3 py-2 border border-r-0 border-gray-300 bg-gray-50 text-gray-500 rounded-l-lg"
+                      >@</span
+                    >
+                    <input
+                      type="text"
+                      id="handle"
+                      value="johndoe"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-r-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    for="avatar-url"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Avatar URL</label
+                  >
+                  <input
+                    type="text"
+                    id="avatar-url"
+                    value="https://randomuser.me/api/portraits/men/1.jpg"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div class="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="verified"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label
+                    for="verified"
+                    class="ml-2 block text-sm font-medium text-gray-700"
+                    >Verified Account</label
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="mb-8">
+              <h3
+                class="text-lg font-medium text-gray-700 mb-4 flex items-center"
+              >
+                <i class="fas fa-edit mr-2 text-blue-500"></i> Post Content
+              </h3>
+              <div>
+                <label
+                  for="content"
+                  class="block text-sm font-medium text-gray-700 mb-1"
+                  >Text</label
+                >
+                <textarea
+                  id="content"
+                  rows="5"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+This is a sample tweet. Edit the content on the right to customize your post!</textarea
+                >
+              </div>
+            </div>
+
+            <!-- Image Section -->
+            <div class="mb-8">
+              <h3
+                class="text-lg font-medium text-gray-700 mb-4 flex items-center"
+              >
+                <i class="fas fa-image mr-2 text-blue-500"></i> Post Image
+              </h3>
+              <div class="twitter-post-image-upload-container">
+                <input
+                  type="file"
+                  id="image-upload"
+                  accept="image/*"
+                  class="twitter-post-image-upload"
+                />
+                <label
+                  for="image-upload"
+                  class="twitter-post-image-upload-label"
+                >
+                  <i class="fas fa-upload"></i> Upload Image
+                </label>
+                <p class="twitter-post-image-upload-info">
+                  Supports JPG, PNG, GIF (Max 5MB)
+                </p>
+                <div id="image-preview-container" class="mt-4 hidden">
+                  <div class="twitter-post-image-upload-preview-container">
+                    <img
+                      id="image-preview"
+                      src="#"
+                      alt="Preview"
+                      class="twitter-post-image-upload-preview"
+                    />
+                    <div
+                      id="remove-image-preview"
+                      class="twitter-post-image-upload-preview-remove"
+                    >
+                      <i class="fas fa-times"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Style Section -->
+            <div>
+              <h3
+                class="text-lg font-medium text-gray-700 mb-4 flex items-center"
+              >
+                <i class="fas fa-palette mr-2 text-blue-500"></i> Post Style
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    for="bg-color"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                    >Background Color</label
+                  >
+                  <input
+                    type="color"
+                    id="bg-color"
+                    value="#ffffff"
+                    class="color-picker"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="text-color"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                    >Text Color</label
+                  >
+                  <input
+                    type="color"
+                    id="text-color"
+                    value="#000000"
+                    class="color-picker"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="gradient-start"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                    >Gradient Start</label
+                  >
+                  <input
+                    type="color"
+                    id="gradient-start"
+                    value="#1d9bf0"
+                    class="color-picker"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="gradient-end"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                    >Gradient End</label
+                  >
+                  <input
+                    type="color"
+                    id="gradient-end"
+                    value="#e4405f"
+                    class="color-picker"
+                  />
+                </div>
+                <div class="md:col-span-2">
+                  <div class="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="use-gradient"
+                      class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      for="use-gradient"
+                      class="ml-2 block text-sm font-medium text-gray-700"
+                      >Use Gradient Background</label
+                    >
+                  </div>
+                </div>
+                <div class="md:col-span-2">
+                  <label
+                    for="font-family"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                    >Font Family</label
+                  >
+                  <select
+                    id="font-family"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="'Inter', sans-serif">Inter (Default)</option>
+                    <option value="'Helvetica Neue', sans-serif">
+                      Helvetica
+                    </option>
+                    <option value="'Times New Roman', serif">
+                      Times New Roman
+                    </option>
+                    <option value="'Courier New', monospace">
+                      Courier New
+                    </option>
+                    <option value="'Arial', sans-serif">Arial</option>
+                    <option value="'Georgia', serif">Georgia</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-white py-6 mt-12">
+      <div class="container mx-auto px-4 text-center text-gray-600">
+        <p>© 2023 X Post Generator. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // DOM Elements
+      const usernameInput = document.getElementById("username");
+      const handleInput = document.getElementById("handle");
+      const avatarUrlInput = document.getElementById("avatar-url");
+      const verifiedCheckbox = document.getElementById("verified");
+      const contentInput = document.getElementById("content");
+      const bgColorInput = document.getElementById("bg-color");
+      const textColorInput = document.getElementById("text-color");
+      const gradientStartInput = document.getElementById("gradient-start");
+      const gradientEndInput = document.getElementById("gradient-end");
+      const useGradientCheckbox = document.getElementById("use-gradient");
+      const fontFamilySelect = document.getElementById("font-family");
+      const imageUploadInput = document.getElementById("image-upload");
+      const imagePreviewContainer = document.getElementById(
+        "image-preview-container"
+      );
+      const imagePreview = document.getElementById("image-preview");
+      const removeImagePreviewBtn = document.getElementById(
+        "remove-image-preview"
+      );
+      const downloadBtn = document.getElementById("download-btn");
+
+      // Preview Elements
+      const previewUsername = document.getElementById("preview-username");
+      const previewHandle = document.getElementById("preview-handle");
+      const previewAvatar = document.getElementById("preview-avatar");
+      const previewVerified = document.getElementById("preview-verified");
+      const previewContent = document.getElementById("preview-content");
+      const previewImageContainer = document.getElementById(
+        "preview-image-container"
+      );
+      const postPreview = document.getElementById("post-preview");
+
+      // Event Listeners
+      usernameInput.addEventListener("input", updatePreview);
+      handleInput.addEventListener("input", updatePreview);
+      avatarUrlInput.addEventListener("input", updatePreview);
+      verifiedCheckbox.addEventListener("change", updatePreview);
+      contentInput.addEventListener("input", updatePreview);
+      bgColorInput.addEventListener("input", updatePreview);
+      textColorInput.addEventListener("input", updatePreview);
+      gradientStartInput.addEventListener("input", updatePreview);
+      gradientEndInput.addEventListener("input", updatePreview);
+      useGradientCheckbox.addEventListener("change", updatePreview);
+      fontFamilySelect.addEventListener("change", updatePreview);
+      imageUploadInput.addEventListener("change", handleImageUpload);
+      removeImagePreviewBtn.addEventListener("click", removeImage);
+      downloadBtn.addEventListener("click", downloadPost);
+
+      // Update Preview Function
+      function updatePreview() {
+        // Update profile info
+        previewUsername.textContent = usernameInput.value;
+        previewHandle.textContent = `@${handleInput.value}`;
+        previewAvatar.src = avatarUrlInput.value;
+
+        // Update verified badge
+        if (verifiedCheckbox.checked) {
+          previewVerified.style.display = "inline-block";
+        } else {
+          previewVerified.style.display = "none";
+        }
+
+        // Update content
+        previewContent.textContent = contentInput.value;
+
+        // Update colors
+        if (useGradientCheckbox.checked) {
+          postPreview.style.background = `linear-gradient(135deg, ${gradientStartInput.value}, ${gradientEndInput.value})`;
+          postPreview.style.setProperty(
+            "--gradient-start",
+            gradientStartInput.value
+          );
+          postPreview.style.setProperty(
+            "--gradient-end",
+            gradientEndInput.value
+          );
+          postPreview.classList.add("gradient-bg");
+        } else {
+          postPreview.style.background = bgColorInput.value;
+          postPreview.classList.remove("gradient-bg");
+        }
+
+        // Update text color
+        postPreview.style.color = textColorInput.value;
+        previewHandle.style.color = textColorInput.value;
+
+        // Update font family
+        postPreview.style.fontFamily = fontFamilySelect.value;
+      }
+
+      // Handle Image Upload
+      function handleImageUpload(e) {
+        const file = e.target.files[0];
+
+        if (file) {
+          // Check file size (max 5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert("Image size should be less than 5MB");
+            return;
+          }
+
+          // Check file type
+          const validTypes = ["image/jpeg", "image/png", "image/gif"];
+          if (!validTypes.includes(file.type)) {
+            alert("Only JPG, PNG, and GIF images are supported");
+            return;
+          }
+
+          // Create preview
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            imagePreview.src = event.target.result;
+            imagePreviewContainer.classList.remove("hidden");
+
+            // Update preview
+            updateImagePreview(event.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Update Image Preview
+      function updateImagePreview(imageSrc) {
+        previewImageContainer.innerHTML = `
+                <img src="${imageSrc}" alt="Post image" class="twitter-post-image">
+            `;
+      }
+
+      // Remove Image
+      function removeImage() {
+        imageUploadInput.value = "";
+        imagePreviewContainer.classList.add("hidden");
+
+        // Reset preview
+        previewImageContainer.innerHTML = `
+                <div class="twitter-post-image-placeholder">
+                    <i class="fas fa-image"></i>
+                </div>
+            `;
+      }
+
+      // Download Post
+      function downloadPost() {
+        // Temporarily hide the download button to avoid it in the screenshot
+        downloadBtn.style.visibility = "hidden";
+
+        html2canvas(postPreview, {
+          scale: 2,
+          backgroundColor: useGradientCheckbox.checked
+            ? gradientStartInput.value
+            : bgColorInput.value,
+        }).then((canvas) => {
+          // Create download link
+          const link = document.createElement("a");
+          link.download = "x-post.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+
+          // Restore the download button
+          downloadBtn.style.visibility = "visible";
+        });
+      }
+
+      // Initialize
+      updatePreview();
+    </script>
+  </body>
+</html>
